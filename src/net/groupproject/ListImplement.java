@@ -1,3 +1,5 @@
+package net.groupproject;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Locale;
@@ -15,58 +17,8 @@ public class ListImplement {
     }
 }
 
-class Place {
-    private String name;
-    private double xCoor;
-    private double yCoor;
-    private String type;
 
 
-    public Place(String name, double xCoor, double yCoor, String type) {
-        this.name = name;
-        this.xCoor = xCoor;
-        this.yCoor = yCoor;
-        this.type = type;
-    }
-
-    Place() {
-        this.name = null;
-    }
-
-    String getName() {
-        return name;
-    }
-
-    void setName(String name) {
-        this.name = name;
-    }
-
-    double getxCoor() {
-        return xCoor;
-    }
-
-    void setxCoor(double xCoor) {
-        this.xCoor = xCoor;
-    }
-
-    double getyCoor() {
-        return yCoor;
-    }
-
-    void setyCoor(double yCoor) {
-        this.yCoor = yCoor;
-    }
-
-    String getType() {
-        return type;
-    }
-
-    void setType(String type) {
-        this.type = type;
-    }
-
-
-}
 
 class List {
 
