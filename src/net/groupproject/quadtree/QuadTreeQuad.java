@@ -36,12 +36,7 @@ public class QuadTreeQuad<T> {
     }
 
     //calculates the distance between the two Positions p1,p2
-    private static double getDiff(Vector2d p1, Vector2d p2) {
-        double xDiff = p2.getX() - p1.getX();
-        double yDiff = p2.getY() - p1.getY();
-
-        return Math.sqrt((xDiff * xDiff) + (yDiff * yDiff));
-    }
+    
 
     public boolean insert(QuadTreeNode<T> node) {
         //if this is en empty quad just put the node inside, no need to divide it
@@ -157,9 +152,9 @@ public class QuadTreeQuad<T> {
         countT = countA = 0;
         if (this.content != null) {
             if (insideBoundBox(this.content.getPos(), boundBoxTl, boundBoxBr)) {
-                double diff = getDiff(pos, this.content.getPos());
 
-                if (diff <= r) {
+
+                if (pos.distance(this.content.getPos()) <= r) {
 
                     Place temp = (Place) this.content.getContent();
                     if (temp.getType().equals("TRAINSTATION")) {
