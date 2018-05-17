@@ -21,12 +21,19 @@ public class GroupProject {
      */
     public static void main(String[] args) {
         QuadTree<Place> qt = new QuadTree<Place>(new Vector2d(0,0),1000000);
-
+        System.out.println("Quadtree:");
         qt=addDataToQT(qt);
         System.out.println("in theory every place should now be in the qt.....");
 
         //Alle Trainstations und Airports in Radius
         qt.placesNearPoint(new Vector2d(1818.54657,5813.29982),100);
+
+
+        System.out.println("List:");
+        Listsolution list=new Listsolution();
+        list.addData();
+        list.placesNearPlace(new Vector2d(1818.54657,5813.29982),100);
+        list.airportNearTrain(15.0,20);
 
 
         //System.out.println("now looking for all trainstations");
