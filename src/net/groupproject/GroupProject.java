@@ -17,17 +17,18 @@ public class GroupProject {
         //TODO: Replace List with something else and use a default ArrayList/directly put the data into the qt
         List places = new List(new Place());
         places.addData();
-        places.print();
+        //places.print();
 
         QuadTree<Place> qt = new QuadTree<Place>(new Vector2d(0,0),1000000);
 
         places.addToQuadTree(qt);
         System.out.println("in theory every place should now be in the qt.....");
 
+        qt.placesNearPoint(new Vector2d(1818.54657,5813.29982),100);
+        qt.trainstationsByAirport(15.0,20);
+       // System.out.println("finding place with name 111th Street (Pullman)");
 
-        System.out.println("finding place with name 111th Street (Pullman)");
-
-        System.out.println("found: "+qt.find(new Vector2d(-9752.758450864792,4919.756854900251)).getContent().getName());
+        //System.out.println("found: "+qt.find(new Vector2d(-9752.758450864792,4919.756854900251)).getContent().getName());
     }
 
 

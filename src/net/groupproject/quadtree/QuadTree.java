@@ -39,4 +39,30 @@ public class QuadTree<T> {
 
         return this.root.find(pos);
     }
+    public void placesNearPoint(Vector2d pos, double r){
+        if( pos.getX() > this.root.getPos().getX()+this.root.getSize()/2 ||
+                pos.getX() < this.root.getPos().getX()-this.root.getSize()/2 ||
+                pos.getY() > this.root.getPos().getY()+this.root.getSize()/2 ||
+                pos.getY() < this.root.getPos().getY()-this.root.getSize()/2){
+            System.out.println("Position is not inside the Quadtree");
+            return ;
+        }
+        else if(r<=0){
+            System.out.println("The radius must be greater than 0");
+            return;
+        }
+
+        this.root.placesNearPoint(pos,r);
+    }
+    public void trainstationsByAirport(double radius, int min){
+        if(min<0){
+            System.out.println("The number of Trainstations must be positive");
+            return;
+        }
+        else if(radius<=0){
+            System.out.println("The radius musst be greater than 0");
+            return;
+        }
+        this.root.trainstationsByAirport(radius,min);
+    }
 }
