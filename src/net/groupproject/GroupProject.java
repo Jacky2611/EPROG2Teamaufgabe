@@ -25,8 +25,12 @@ public class GroupProject {
         qt=addDataToQT(qt);
         System.out.println("in theory every place should now be in the qt.....");
 
+        //Alle Trainstations und Airports in Radius
         qt.placesNearPoint(new Vector2d(1818.54657,5813.29982),100);
-        qt.trainstationsByAirport(15.0,20);
+
+
+        //System.out.println("now looking for all trainstations");
+        //System.out.println("Found: "+qt.airportByTrainstations(15.0,20));
 
 
        // System.out.println("finding place with name 111th Street (Pullman)");

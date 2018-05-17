@@ -3,6 +3,9 @@ package net.groupproject.quadtree;
 import net.groupproject.Place;
 import net.groupproject.util.Vector2d;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Ansraer on 16.05.2018
  * @author Jakob Lang
@@ -39,11 +42,13 @@ public class QuadTreeQuad<T> {
     
 
     public boolean insert(QuadTreeNode<T> node) {
+
+        if(node==null)
+            return false;
+
         //if this is en empty quad just put the node inside, no need to divide it
         if (this.content == null && (leftUp == null && leftDown == null && rightUp == null && rightDown == null)) {
             this.content = node;
-
-            System.out.println("added " + ((Place) node.getContent()).getName());
 
             return true;
         }
@@ -56,13 +61,13 @@ public class QuadTreeQuad<T> {
                 if (this.rightUp == null) {
                     this.rightUp = new QuadTreeQuad<T>(this.pos.getX() + this.size / 4, this.pos.getY() + this.size / 4, this.size / 2);
                 }
-                return this.rightUp.insert(node);
+                this.rightUp.insert(node);
             } else {
                 //down
                 if (this.rightDown == null) {
                     this.rightDown = new QuadTreeQuad<T>(this.pos.getX() + this.size / 4, this.pos.getY() - this.size / 4, this.size / 2);
                 }
-                return this.rightDown.insert(node);
+                this.rightDown.insert(node);
             }
         } else {
             //left side
@@ -71,15 +76,21 @@ public class QuadTreeQuad<T> {
                 if (this.leftUp == null) {
                     this.leftUp = new QuadTreeQuad<T>(this.pos.getX() - this.size / 4, this.pos.getY() + this.size / 4, this.size / 2);
                 }
-                return this.leftUp.insert(node);
+                this.leftUp.insert(node);
             } else {
                 //down
                 if (this.leftDown == null) {
                     this.leftDown = new QuadTreeQuad<T>(this.pos.getX() - this.size / 4, this.pos.getY() - this.size / 4, this.size / 2);
                 }
-                return this.leftDown.insert(node);
+                this.leftDown.insert(node);
             }
         }
+
+        QuadTreeNode<T> n= this.content;
+        this.content=null;
+        this.insert(n);
+
+        return true;
 
     }
 
@@ -138,65 +149,73 @@ public class QuadTreeQuad<T> {
     //prints out the number of Trainstations and Airports
     public void placesNearPoint(Vector2d pos, double r) {
 
-        Vector2d boundBoxTl = new Vector2d(pos.getX() - r, pos.getY() + r);
-        Vector2d boundBoxBr = new Vector2d(pos.getX() + r, pos.getY() - r);
+        long time = System.currentTimeMillis();
+        int airports = 0;
+        int stations=0;
 
-        int[] x = placeInRadius(pos, r, boundBoxTl, boundBoxBr);
-        System.out.println("There are " + x[0] + " Trainstations and " + x[1] + " Airports");
+        List<QuadTreeNode<T>> contents = getContentInRadius(pos, r);
+        for(QuadTreeNode<T> n : contents){
+            if(((Place)n.getContent()).getType().equals("AIRPORT"))
+                airports++;
+            else
+                stations++;
+
+        }
+        System.out.println("There are " + stations + " Trainstations and " + airports + " Airports");
+        time = System.currentTimeMillis() - time;
+
+        System.out.println("This took " + time +"ms to calculate");
+
     }
 
     //finds every Place within a radius r of Position pos.
     //Returns an int[] Array, where Array[0] is the number of Trainstations and Array[1] is the number of Airports
-    private int[] placeInRadius(Vector2d pos, double r, Vector2d boundBoxTl, Vector2d boundBoxBr) {
-        int countT, countA;
-        countT = countA = 0;
+    private List<QuadTreeNode<T>> getContentInRadius(Vector2d pos, double r) {
+        Vector2d boundBoxTl = new Vector2d(pos.getX() - r, pos.getY() + r);
+        Vector2d boundBoxBr = new Vector2d(pos.getX() + r, pos.getY() - r);
+
+        //this list will be filled with all content in the specified radius and is then returned to the user.
+        List<QuadTreeNode<T>> contents = new ArrayList<QuadTreeNode<T>>();
+
         if (this.content != null) {
-            if (insideBoundBox(this.content.getPos(), boundBoxTl, boundBoxBr)) {
-
-
+            if (insideBoundBox(this.content.getPos(),boundBoxTl,boundBoxBr)) {
+            //if (insideBoundBox(boundBox,this.content.getPos())) {
                 if (pos.distance(this.content.getPos()) <= r) {
-
-                    Place temp = (Place) this.content.getContent();
-                    if (temp.getType().equals("TRAINSTATION")) {
-                        countT++;
-                    } else {
-                        countA++;
-                    }
+                    contents.add(this.content);
                 }
             }
-            if (this.leftUp != null) {
-                int[] arr = this.leftUp.placeInRadius(pos, r, boundBoxTl, boundBoxBr);
-                countT += arr[0];
-                countA += arr[1];
+        } else {
+            if (this.leftUp != null && isOverlapping(boundBoxTl,boundBoxBr, this.leftUp.getTopLeftCorner(), this.leftUp.getBottomRightCorner())) {
+                contents.addAll(this.leftUp.getContentInRadius(pos, r));
             }
-            if (this.rightUp != null) {
-                int[] arr = this.rightUp.placeInRadius(pos, r, boundBoxTl, boundBoxBr);
-                countT += arr[0];
-                countA += arr[1];
+            if (this.rightUp != null && isOverlapping(boundBoxTl,boundBoxBr, this.rightUp.getTopLeftCorner(), this.rightUp.getBottomRightCorner())) {
+                contents.addAll(this.rightUp.getContentInRadius(pos, r));
+
             }
-            if (this.leftDown != null) {
-                int[] arr = this.leftDown.placeInRadius(pos, r, boundBoxTl, boundBoxBr);
-                countT += arr[0];
-                countA += arr[1];
+            if (this.leftDown != null && isOverlapping(boundBoxTl,boundBoxBr, this.leftDown.getTopLeftCorner(), this.leftDown.getBottomRightCorner())) {
+                contents.addAll(this.leftDown.getContentInRadius(pos, r));
             }
-            if (this.rightDown != null) {
-                int[] arr = this.rightDown.placeInRadius(pos, r, boundBoxTl, boundBoxBr);
-                countT += arr[0];
-                countA += arr[1];
+            if (this.rightDown != null && isOverlapping(boundBoxTl,boundBoxBr, this.rightDown.getTopLeftCorner(), this.rightDown.getBottomRightCorner())) {
+                contents.addAll(this.rightDown.getContentInRadius(pos, r));
             }
         }
 
 
-        return new int[]{countT, countA};
+        return contents;
     }
 
-    private int[] placeInRadius(Vector2d pos, double r) {
-        Vector2d boundBoxTl = new Vector2d(pos.getX() - r, pos.getY() + r);
-        Vector2d boundBoxBr = new Vector2d(pos.getX() + r, pos.getY() - r);
 
-        return placeInRadius(pos, r, boundBoxTl, boundBoxBr);
 
+    public boolean isOverlapping(Vector2d Rect1TopLeft, Vector2d Rect1BottomRight,Vector2d Rect2TopLeft, Vector2d Rect2BottomRight) {
+        if (Rect1TopLeft.getX() > Rect2BottomRight.getX() // R1 is right to R2
+            || Rect1BottomRight.getX() < Rect2TopLeft.getX()// R1 is left to R2
+            || Rect1TopLeft.getY() < Rect2BottomRight.getY() // R1 is below R2
+            || Rect1BottomRight.getY() > Rect2TopLeft.getY()) { // R1 is above R1
+            return false;
+        }
+        return true;
     }
+
 
     //checks, whether a Position is inside a boundingbox defined by the two vertices TopLeft and BottomRight
     private boolean insideBoundBox(Vector2d p, Vector2d bbTl, Vector2d bbBr) {
@@ -207,46 +226,46 @@ public class QuadTreeQuad<T> {
 
     }
 
-    //prints out the number of Airports, which have at least min Trainstations within a radius r
-    public void trainstationsByAirport(double r, int min) {
-
-        int count = trainstationsByAirport1(r, min);
-
-        System.out.println("There are " + count + " Airports, which have at least " + min + " Trainstations within a radius of "+r);
-
+    public Vector2d getTopLeftCorner(){
+        return new Vector2d(this.pos.getX()-this.size/2, this.pos.getY()+this.size/2);
     }
 
-    //finds the airports, which have at least min Trainstations within a radius r and returns the number of these Airports
-    private int trainstationsByAirport1(double radius, int min) {
-        int count = 0;
-        int help[];
+    public Vector2d getBottomRightCorner(){
+        return new Vector2d(this.pos.getX()+this.size/2, this.pos.getY()-this.size/2);
+    }
 
-        if (((Place)this.content.getContent()).getType().equals("AIRPORT")) {
-            //TODO: Mistake must be here. Wrong Vector2d? (293 Airports should come out, not 17)
-            /*different Vector2d i tried with their return values:
-            new Vector2d(this.content.getPos().getX(),this.content.getPos().getY()) - 17
-            new Vector2d(this.pos.getX(),this.pos.getY()) - 9
-            new Vector2d(this.getPos().getX(),this.getPos().getY()) - 9
-            this.pos / this.getPos() - 9
-            this.content.getPos() - 17
-            this.content.getContent()).getPos() - 17
-             */
-            help = this.placeInRadius( this.content.getPos(), radius);
-            if (help[0] >=min) {
+
+
+
+
+
+    //finds the airports, which have at least min Trainstations within a radius r and returns the number of these Airports
+    public int airportByTrainstations(double radius, int minNumberOfTrainstations, QuadTreeQuad<T> root) {
+        int count = 0;
+
+        if (this.content!= null && ((Place)this.content.getContent()).getType().equals("AIRPORT")) {
+            int trainstations=0;
+            List<QuadTreeNode<T>> buildings = root.getContentInRadius( this.content.getPos(), radius);
+            for(QuadTreeNode<T> n : buildings){
+                if(((Place)n.getContent()).getType().equals("TRAINSTATION"))
+                    trainstations++;
+            }
+            if (trainstations >=minNumberOfTrainstations) {
                 count++;
             }
+
         }
         if (this.leftUp != null) {
-            count+= this.leftUp.trainstationsByAirport1(radius, min);
+            count+= this.leftUp.airportByTrainstations(radius, minNumberOfTrainstations,root);
         }
         if (this.rightUp != null) {
-            count += this.rightUp.trainstationsByAirport1(radius, min);
+            count += this.rightUp.airportByTrainstations(radius, minNumberOfTrainstations,root);
         }
         if (this.leftDown != null) {
-            count += this.leftDown.trainstationsByAirport1(radius, min);
+            count += this.leftDown.airportByTrainstations(radius, minNumberOfTrainstations,root);
         }
         if (this.rightDown != null) {
-            count += this.rightDown.trainstationsByAirport1(radius, min);
+            count += this.rightDown.airportByTrainstations(radius, minNumberOfTrainstations,root);
         }
 
         return count;

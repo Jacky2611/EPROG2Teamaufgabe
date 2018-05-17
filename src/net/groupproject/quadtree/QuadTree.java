@@ -54,15 +54,16 @@ public class QuadTree<T> {
 
         this.root.placesNearPoint(pos,r);
     }
-    public void trainstationsByAirport(double radius, int min){
+    public int airportByTrainstations(double radius, int min){
         if(min<0){
             System.out.println("The number of Trainstations must be positive");
-            return;
+            return -1;
         }
         else if(radius<=0){
             System.out.println("The radius musst be greater than 0");
-            return;
+            return -1;
         }
-        this.root.trainstationsByAirport(radius,min);
+        //TODO: Following line is important
+        return this.root.airportByTrainstations(radius,min,this.root);
     }
 }
