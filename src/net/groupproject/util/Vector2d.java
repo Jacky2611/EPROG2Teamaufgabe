@@ -4,16 +4,14 @@ import java.util.Objects;
 
 
 /**
- * @author Ansraer on 16.05.2018
+ * @author Ansraer on 10.02.2018
  * @author Jakob Lang
- * @project TeamaufgabeProjekt
+ * @project LangDefaultLibrary
  */
 public class Vector2d {
 
     private double x;
     private double y;
-
-    // Constructor methods ....
 
     public Vector2d() {
         x = y = 0.0;
@@ -25,7 +23,6 @@ public class Vector2d {
     }
 
     // Convert vector to a string ...
-
     public String toString() {
         return "Vector2D(" + x + ", " + y + ")";
     }

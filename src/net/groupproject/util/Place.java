@@ -1,4 +1,4 @@
-package net.groupproject;
+package net.groupproject.util;
 import net.groupproject.util.Vector2d;
 
 import java.lang.Math;

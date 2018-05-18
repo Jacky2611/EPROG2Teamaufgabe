@@ -1,6 +1,6 @@
 package net.groupproject.quadtree;
 
-import net.groupproject.Place;
+import net.groupproject.util.Place;
 import net.groupproject.util.Vector2d;
 
 import java.util.ArrayList;
@@ -94,13 +94,6 @@ public class QuadTreeQuad<T> {
 
     }
 
-    public Vector2d getPos() {
-        return pos;
-    }
-
-    public double getSize() {
-        return size;
-    }
 
     public QuadTreeNode<T> find(Vector2d pos) {
 
@@ -146,31 +139,11 @@ public class QuadTreeQuad<T> {
 
     }
 
-    //prints out the number of Trainstations and Airports
-    public void placesNearPoint(Vector2d pos, double r) {
 
-        long time = System.currentTimeMillis();
-        int airports = 0;
-        int stations=0;
-
-        List<QuadTreeNode<T>> contents = getContentInRadius(pos, r);
-        for(QuadTreeNode<T> n : contents){
-            if(((Place)n.getContent()).getType().equals("AIRPORT"))
-                airports++;
-            else
-                stations++;
-
-        }
-        System.out.println("There are " + stations + " Trainstations and " + airports + " Airports");
-        time = System.currentTimeMillis() - time;
-
-        System.out.println("This took " + time +"ms to calculate");
-
-    }
 
     //finds every Place within a radius r of Position pos.
     //Returns an int[] Array, where Array[0] is the number of Trainstations and Array[1] is the number of Airports
-    private List<QuadTreeNode<T>> getContentInRadius(Vector2d pos, double r) {
+    public List<QuadTreeNode<T>> getContentInRadius(Vector2d pos, double r) {
         Vector2d boundBoxTl = new Vector2d(pos.getX() - r, pos.getY() + r);
         Vector2d boundBoxBr = new Vector2d(pos.getX() + r, pos.getY() - r);
 
@@ -235,11 +208,17 @@ public class QuadTreeQuad<T> {
     }
 
 
+    public Vector2d getPos() {
+        return pos;
+    }
+
+    public double getSize() {
+        return size;
+    }
 
 
-
-
-    //finds the airports, which have at least min Trainstations within a radius r and returns the number of these Airports
+    //  Too specific considering this is a type neutral quad tree. Remove once we have made sure it's no longer required.
+    @Deprecated
     public int airportByTrainstations(double radius, int minNumberOfTrainstations, QuadTreeQuad<T> root) {
         int count = 0;
 

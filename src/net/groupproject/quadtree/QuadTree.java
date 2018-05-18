@@ -2,6 +2,8 @@ package net.groupproject.quadtree;
 
 import net.groupproject.util.Vector2d;
 
+import java.util.List;
+
 /**
  * @author Ansraer on 16.05.2018
  * @author Jakob Lang
@@ -39,31 +41,25 @@ public class QuadTree<T> {
 
         return this.root.find(pos);
     }
-    public void placesNearPoint(Vector2d pos, double r){
+
+    public List<QuadTreeNode<T>> getContentInRadius(Vector2d pos, double r) {
         if( pos.getX() > this.root.getPos().getX()+this.root.getSize()/2 ||
                 pos.getX() < this.root.getPos().getX()-this.root.getSize()/2 ||
                 pos.getY() > this.root.getPos().getY()+this.root.getSize()/2 ||
                 pos.getY() < this.root.getPos().getY()-this.root.getSize()/2){
             System.out.println("Position is not inside the Quadtree");
-            return ;
+            return null;
         }
         else if(r<=0){
             System.out.println("The radius must be greater than 0");
-            return;
+            return null;
         }
 
-        this.root.placesNearPoint(pos,r);
+        return this.root.getContentInRadius(pos,r);
     }
-    public int airportByTrainstations(double radius, int min){
-        if(min<0){
-            System.out.println("The number of Trainstations must be positive");
-            return -1;
-        }
-        else if(radius<=0){
-            System.out.println("The radius musst be greater than 0");
-            return -1;
-        }
-        //TODO: Following line is important
-        return this.root.airportByTrainstations(radius,min,this.root);
-    }
+
+
+    public Vector2d getPos(){return this.root.getPos();}
+
+    public double getSize(){return this.root.getSize();}
 }

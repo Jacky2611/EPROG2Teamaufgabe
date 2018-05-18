@@ -1,5 +1,6 @@
 package net.groupproject;
 
+import net.groupproject.util.Place;
 import net.groupproject.util.Vector2d;
 
 import java.io.File;
@@ -10,12 +11,12 @@ import java.util.Locale;
 import java.util.Scanner;
 
 
-public class Listsolution {
+public class ListSolution {
 
     List<Place> list;
 
 
-    Listsolution() {
+    ListSolution() {
         this.list = new ArrayList<Place>();
 
     }
