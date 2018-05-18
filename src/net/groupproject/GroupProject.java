@@ -21,6 +21,7 @@ public class GroupProject {
 
     //TODO: Use proper comments for documentation
     //TODO: Further cleanup of code
+    //TODO: Make sure that our quadTree can handle two Places with the same coordinates.
 
     /**
      * Starting point for the entire project.
