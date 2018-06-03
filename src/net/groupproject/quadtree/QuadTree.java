@@ -17,17 +17,19 @@ public class QuadTree<T> {
         this.root = new QuadTreeQuad<T>(center, size);
     }
 
-    public boolean insert(QuadTreeNode<T> node){
+    public void insert(QuadTreeNode<T> node){
 
         //only insert an object if it's inside the quadtrees bounds
         if( node.getPos().getX() > this.root.getPos().getX()+this.root.getSize()/2 ||
             node.getPos().getX() < this.root.getPos().getX()-this.root.getSize()/2 ||
             node.getPos().getY() > this.root.getPos().getY()+this.root.getSize()/2 ||
             node.getPos().getY() < this.root.getPos().getY()-this.root.getSize()/2){
-            return false;
+            return;
+
+            //in theory we could throw some sort of out of bounds exception here...
         }
 
-        return this.root.insert(node);
+        this.root.insert(node);
     }
 
     public QuadTreeNode<T> find(Vector2d pos){

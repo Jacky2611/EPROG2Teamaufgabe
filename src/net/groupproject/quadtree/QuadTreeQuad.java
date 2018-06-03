@@ -41,16 +41,16 @@ public class QuadTreeQuad<T> {
     //calculates the distance between the two Positions p1,p2
     
 
-    public boolean insert(QuadTreeNode<T> node) {
+    public void insert(QuadTreeNode<T> node) {
 
         if(node==null)
-            return false;
+            return;
 
         //if this is en empty quad just put the node inside, no need to divide it
         if (this.content == null && (leftUp == null && leftDown == null && rightUp == null && rightDown == null)) {
             this.content = node;
 
-            return true;
+            return;
         }
 
         //= in case something is exactly at the center
@@ -86,11 +86,12 @@ public class QuadTreeQuad<T> {
             }
         }
 
+        //After splitting this quad into more quads insert the content into the right sub-quad and remove it from this quad.
         QuadTreeNode<T> n= this.content;
         this.content=null;
         this.insert(n);
 
-        return true;
+        return;
 
     }
 
@@ -217,38 +218,6 @@ public class QuadTreeQuad<T> {
     }
 
 
-    //  Too specific considering this is a type neutral quad tree. Remove once we have made sure it's no longer required.
-    @Deprecated
-    public int airportByTrainstations(double radius, int minNumberOfTrainstations, QuadTreeQuad<T> root) {
-        int count = 0;
-
-        if (this.content!= null && ((Place)this.content.getContent()).getType().equals("AIRPORT")) {
-            int trainstations=0;
-            List<QuadTreeNode<T>> buildings = root.getContentInRadius( this.content.getPos(), radius);
-            for(QuadTreeNode<T> n : buildings){
-                if(((Place)n.getContent()).getType().equals("TRAINSTATION"))
-                    trainstations++;
-            }
-            if (trainstations >=minNumberOfTrainstations) {
-                count++;
-            }
-
-        }
-        if (this.leftUp != null) {
-            count+= this.leftUp.airportByTrainstations(radius, minNumberOfTrainstations,root);
-        }
-        if (this.rightUp != null) {
-            count += this.rightUp.airportByTrainstations(radius, minNumberOfTrainstations,root);
-        }
-        if (this.leftDown != null) {
-            count += this.leftDown.airportByTrainstations(radius, minNumberOfTrainstations,root);
-        }
-        if (this.rightDown != null) {
-            count += this.rightDown.airportByTrainstations(radius, minNumberOfTrainstations,root);
-        }
-
-        return count;
-    }
 
 
 }
